@@ -6,7 +6,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+//@RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseBean exceptionHandler(Exception e){
