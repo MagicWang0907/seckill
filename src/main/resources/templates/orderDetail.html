@@ -30,7 +30,7 @@
                     <td colspan="2" th:text="${order.goodsPrice}"></td>
                 </tr>
                 <tr>
-                     <td>下单时间</td> <td th:text="${#dates.format(order.createDate, 'yyyy-MM-dd HH:mm:ss')}" colspan="2"></td>
+                     <td>下单时间</td> <td th:text="${order.createDate}" colspan="2"></td>
                 </tr>
                 <tr>
                     <td>订单状态</td>

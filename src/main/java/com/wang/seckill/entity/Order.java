@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  * <p>
@@ -153,6 +155,10 @@ public class Order implements Serializable {
     public void setPayDate(LocalDateTime payDate) {
         this.payDate = payDate;
     }
+
+    /*  传前端刷新将Data属性赋值
+        严格来说应该转DTO
+     */
 
     @Override
     public String toString() {

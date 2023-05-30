@@ -4,6 +4,7 @@ import com.wang.seckill.entity.SeckillGoods;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.wang.seckill.vo.GoodsVO;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * @author wang
  * @since 2022-02-19
  */
+
 public interface SeckillGoodsMapper extends BaseMapper<SeckillGoods> {
     @Select("SELECT\n" +
             "\tg.id,\n" +

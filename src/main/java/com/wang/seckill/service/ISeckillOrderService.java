@@ -17,6 +17,8 @@ public interface ISeckillOrderService extends IService<SeckillOrder> {
 
     boolean alreadyDoSecKill(User user,Long goodsId);
 
-    SeckillOrder generateSeckillOrder(Order order, int goodCount);
+    SeckillOrder generateSeckillOrder(Order order);
+
+    Long getSecKillOrderResult(User user, Long orderId);
 
 }

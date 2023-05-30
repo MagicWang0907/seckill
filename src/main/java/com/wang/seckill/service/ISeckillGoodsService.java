@@ -4,6 +4,7 @@ import com.wang.seckill.entity.SeckillGoods;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wang.seckill.entity.User;
 import com.wang.seckill.vo.GoodsVO;
+import com.wang.seckill.vo.ResponseBean;
 import org.springframework.ui.Model;
 
 import java.util.List;
@@ -22,6 +23,4 @@ public interface ISeckillGoodsService extends IService<SeckillGoods> {
     List<GoodsVO> findGoods();
 
     GoodsVO findGoodsVoByID(Long goodsID);
-
-    String doSecKill(Model model, User user,Long goodsId);
 }
