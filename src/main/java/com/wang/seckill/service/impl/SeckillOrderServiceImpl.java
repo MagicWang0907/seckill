@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * <p>
@@ -34,6 +36,12 @@ public class SeckillOrderServiceImpl extends ServiceImpl<SeckillOrderMapper, Sec
     @Autowired
     SeckillGoodsMapper seckillGoodsMapper;
 
+    @Autowired
+    ISeckillGoodsService seckillGoodsService;
+
+    //标记库存已经为0的商品ID
+    CopyOnWriteArraySet<Long> EMPTY_STOCK_SET = new CopyOnWriteArraySet<>();
+
     @Override
     public boolean alreadyDoSecKill(User user, Long goodsId) {
         QueryWrapper<SeckillOrder> seckillOrderQueryWrapper = new QueryWrapper<>();
@@ -46,36 +54,58 @@ public class SeckillOrderServiceImpl extends ServiceImpl<SeckillOrderMapper, Sec
     }
 
     @Override
-    public SeckillOrder generateSeckillOrder( Order order) {
+    public int generateSeckillOrder( Order order) {
         //减库存
-        SeckillGoods good= seckillGoodsMapper.selectOne(new QueryWrapper<SeckillGoods>().eq("goods_id", order.getGoodsId()));
-        good.setStockCount(good.getStockCount()-1);
-        seckillGoodsMapper.updateById(good);
+        UpdateWrapper<SeckillGoods> sql = new UpdateWrapper<SeckillGoods>()
+                .setSql("stock_count=stock_count-1")
+                .eq("goods_id", order.getGoodsId())
+                .gt("stock_count", 0);
+        boolean isEmptyStock = seckillGoodsService.update(sql);
+        if(!isEmptyStock){
+            return 0;
+        }
         //生成秒杀订单
         SeckillOrder seckillOrder = new SeckillOrder();
         seckillOrder.setUserId(order.getUserId());
         seckillOrder.setOrderId(order.getId());
         seckillOrder.setGoodsId(order.getGoodsId());
-        seckillOrderMapper.insert(seckillOrder);
-        return seckillOrder;
+        int res = 0;
+        try {
+            res = seckillOrderMapper.insert(seckillOrder);
+        }finally {
+            if(res == 0){
+                //生成订单失败，可能情况订单重复
+                seckillGoodsService.update(new UpdateWrapper<SeckillGoods>()
+                        .setSql("stock_count=stock_count+1")
+                        .eq("goods_id", order.getGoodsId()));
+            }
+        }
+
+
+
+        return res;
     }
     /*
         返回orderID成功，返回-1 秒杀失败，返回0 排队中
      */
     @Override
-    public Long getSecKillOrderResult(User user, Long goodsId) {
-        Long res = 0L;
+    public String getSecKillOrderResult(User user, Long goodsId) {
+        String res = "0";
         SeckillOrder seckillOrder = seckillOrderMapper.selectOne(new QueryWrapper<SeckillOrder>().eq("goods_id", goodsId).eq("user_id", user.getId()));
         if(!Objects.isNull(seckillOrder)){
-            res = seckillOrder.getOrderId();
+            res = seckillOrder.getOrderId().toString();
         }
         else{
             // TODO: 2023/5/30 使用Redis优化此处查询 
             if(seckillGoodsMapper.selectOne(new QueryWrapper<SeckillGoods>().eq("goods_id", goodsId)).getStockCount()<=0){
-                res = -1L;
+                res = "-1";
             }
         }
         return res;
+    }
 
+    @Override
+    public CopyOnWriteArraySet<Long> getEmptyStockMap() {
+        return EMPTY_STOCK_SET;
     }
 }

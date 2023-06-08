@@ -21,4 +21,6 @@ public interface IOrderService extends IService<Order> {
 
     //生成订单详情
     OrderDetailVO generateOrderDetail(User user, Long orderId);
+
+    public boolean deleteOrderById(Long id);
 }

@@ -5,6 +5,9 @@ import com.wang.seckill.entity.SeckillOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wang.seckill.entity.User;
 
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 /**
  * <p>
  *  服务类
@@ -17,8 +20,9 @@ public interface ISeckillOrderService extends IService<SeckillOrder> {
 
     boolean alreadyDoSecKill(User user,Long goodsId);
 
-    SeckillOrder generateSeckillOrder(Order order);
+    int generateSeckillOrder(Order order);
 
-    Long getSecKillOrderResult(User user, Long orderId);
+    String getSecKillOrderResult(User user, Long orderId);
 
+    CopyOnWriteArraySet<Long> getEmptyStockMap();
 }

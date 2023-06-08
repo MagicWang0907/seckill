@@ -47,9 +47,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if(StringUtils.isEmpty(mobile)||StringUtils.isEmpty(password)){
             throw new GlobalException(ResponseEnum.LOGIN_ERROR);
         }
-//        if(!ValidationUtils.isMobile(mobile)){
-//            return ResponseBean.error(ResponseEnum.MOBILE_ERROR);
-//        }
 
         User user = userMapper.selectById(mobile);
         if (user==null|| !MD5Utils.fromPassToDBPass(password,user.getSlat()).equals(user.getPassword())){
@@ -60,7 +57,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         redisTemplate.opsForValue().set("user:"+ticket,user);
         CookieUtil.setCookie(req,resp,"userTicket",ticket);
 
-        return ResponseBean.success();
+        return ResponseBean.success(ticket);
     }
 
     @Override

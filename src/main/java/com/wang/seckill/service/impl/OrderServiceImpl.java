@@ -1,5 +1,6 @@
 package com.wang.seckill.service.impl;
 
+import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wang.seckill.adapter.OrderAdapter;
 import com.wang.seckill.adapter.UserAdapter;
@@ -42,6 +43,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public Order generateOrder(User user, GoodsVO good) {
         Integer stockCount = good.getStockCount();
         Order order = new Order();
+        order.setId((new DefaultIdentifierGenerator()).nextId(order));
         order.setCreateDate(LocalDateTime.now());
         order.setOrderChannel(0);
         order.setGoodsCount(1);
@@ -77,5 +79,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         //待完善
         orderDetailVO.setUser(userAdapter.userToUserDTO(user));
         return orderDetailVO;
+    }
+
+    @Override
+    public boolean deleteOrderById(Long id){
+        if(Objects.isNull(id)){
+            return false;
+        }
+        return this.removeById(id);
     }
 }

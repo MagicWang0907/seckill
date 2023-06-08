@@ -32,6 +32,8 @@ public class MD5Utils {
     public static void main(String[] args) {
         System.out.println(inputPassToFromPass("123456"));
         System.out.println(inputPassToDBPass("123456","1a2b3c4d"));
+        System.out.println(inputPassToDBPass("123456","1a2b3c"));
+        System.out.println(fromPassToDBPass("b7797cce01b4b131b433b6acf4add449","1a2b3c"));
     }
 
 }
